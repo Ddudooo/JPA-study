@@ -14,7 +14,7 @@ crashlytics-build.properties
 fabric.properties
 
 # checkstyle report files
-config/checkstyle/**/*
+config/checkstyle/reports/*
 
 # gradle
 .gradle/

@@ -1,6 +1,7 @@
 package com.jpastudy.ex1;
 
 import com.jpastudy.ex1.entity.Member;
+import com.jpastudy.ex1.entity.RoleType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -93,9 +94,9 @@ public class Ex1Main {
             */
 
             // 준영속 테스트
-
+            /*
             Member member = em.find(Member.class, 150L);
-            member.setName("AAAA");
+            member.setUsername("AAAA");
 
             // 준 영속 상태
             //em.detach(member);
@@ -104,6 +105,12 @@ public class Ex1Main {
             //em.persist(member);
             //강제로 플러시 호출 -> 이시점에서 디비 반영
             em.flush();
+            */
+            Member member = new Member("testA");
+            member.setAge(10);
+            member.setRoleType(RoleType.ADMIN);
+
+            em.persist(member);
 
             System.out.println("=== BEFORE ===");
             // 트랜잭션 커밋
