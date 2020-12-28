@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+compileJava {}.options.encoding("UTF-8")
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    /*  JPA 하이버 네이트  */
+    implementation('org.hibernate:hibernate-entitymanager:5.3.10.Final')
+    /*  H2 데이터베이스  */
+    implementation('com.h2database:h2:1.4.199')
+    /*  lombok  */
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.16'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    // JAX-B dependencies for JDK 9+
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+checkstyle {
+    version("8.38")
+    ignoreFailures = true
+    configFile file("${project.rootDir}/config/checkstyle/google_check.xml")
+    reportsDir file("${project.rootDir}/config/checkstyle/reports")
+}
