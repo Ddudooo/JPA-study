@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * 테스트용 간단한 엔티티 모델.
@@ -27,6 +29,20 @@ public class Member {
     private Long id;
     @Column(name = "USERNAME")
     private String name;
+    /*
     @Column(name = "TEAM_ID")
     private Long TeamId;
+    */
+    @ManyToOne
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
+
+    public Member(String name) {
+        this.name = name;
+    }
+
+    public Member(String name, Team team) {
+        this.name = name;
+        this.team = team;
+    }
 }

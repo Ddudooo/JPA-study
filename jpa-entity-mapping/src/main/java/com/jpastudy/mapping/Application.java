@@ -1,5 +1,8 @@
 package com.jpastudy.mapping;
 
+import com.jpastudy.mapping.entity.Member;
+import com.jpastudy.mapping.entity.Team;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -21,6 +24,12 @@ public class Application {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
+            Team team = new Team("TeamA");
+            em.persist(team);
+
+            Member member = new Member("member1", team);
+            em.persist(member);
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

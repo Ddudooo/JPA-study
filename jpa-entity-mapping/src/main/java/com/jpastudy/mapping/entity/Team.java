@@ -22,4 +22,8 @@ public class Team {
     @GeneratedValue
     private Long id;
     private String name;
+
+    public Team(String name) {
+        this.name = name;
+    }
 }
