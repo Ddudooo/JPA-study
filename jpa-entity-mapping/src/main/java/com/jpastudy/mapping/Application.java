@@ -3,6 +3,7 @@ package com.jpastudy.mapping;
 import com.jpastudy.mapping.entity.Member;
 import com.jpastudy.mapping.entity.Team;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -24,11 +25,24 @@ public class Application {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            Team team = new Team("TeamA");
-            em.persist(team);
+            Team teamA = new Team("TeamA");
+            em.persist(teamA);
+            Team teamB = new Team("TeamB");
+            em.persist(teamB);
 
-            Member member = new Member("member1", team);
+            Member member = new Member("member1", teamA);
             em.persist(member);
+
+            em.flush();
+            em.clear();
+
+            Member findMember = em.find(Member.class, member.getId());
+
+            List<Member> members = findMember.getTeam().getMembers();
+            for(Member m : members){
+                System.out.println("M name = "+m.getName());
+            }
+
 
             tx.commit();
         } catch (Exception e) {
