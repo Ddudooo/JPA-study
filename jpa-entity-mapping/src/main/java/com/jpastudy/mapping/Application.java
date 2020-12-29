@@ -27,22 +27,23 @@ public class Application {
         try {
             Team teamA = new Team("TeamA");
             em.persist(teamA);
+            /*
             Team teamB = new Team("TeamB");
             em.persist(teamB);
-
+            */
             Member member = new Member("member1", teamA);
+
             em.persist(member);
 
-            em.flush();
-            em.clear();
+            //em.flush();
+            //em.clear();
 
             Member findMember = em.find(Member.class, member.getId());
 
             List<Member> members = findMember.getTeam().getMembers();
-            for(Member m : members){
-                System.out.println("M name = "+m.getName());
+            for (Member m : members) {
+                System.out.println("M name = " + m.getName());
             }
-
 
             tx.commit();
         } catch (Exception e) {
