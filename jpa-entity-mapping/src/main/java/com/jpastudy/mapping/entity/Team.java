@@ -32,4 +32,12 @@ public class Team {
     public Team(String name) {
         this.name = name;
     }
+
+    /*
+    양방향 연관관계일경우 연관관계 편의 메소드의 경우 택1만 하길 권장
+    public void addMember(Member member) {
+        member.getTeam().addMember(member);
+        this.members.add(member);
+    }
+    */
 }

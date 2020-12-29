@@ -31,7 +31,9 @@ public class Application {
             Team teamB = new Team("TeamB");
             em.persist(teamB);
             */
-            Member member = new Member("member1", teamA);
+            Member member = new Member("member1");
+            member.changeTeam(teamA);
+            //teamA.addMember(member);
 
             em.persist(member);
 
