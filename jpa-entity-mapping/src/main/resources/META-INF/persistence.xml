@@ -7,6 +7,9 @@
         <!--  빌드 환경에 따라 자동으로 인식하지 못하여 추가  -->
         <class>com.jpastudy.mapping.entity.Member</class>
         <class>com.jpastudy.mapping.entity.Team</class>
+        <class>com.jpastudy.mapping.entity.Locker</class>
+        <class>com.jpastudy.mapping.entity.Product</class>
+        <class>com.jpastudy.mapping.entity.Order</class>
         <properties>
             <!--  필수 속성  -->
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
