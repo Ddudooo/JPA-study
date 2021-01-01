@@ -22,13 +22,13 @@ public class OrderItem {
     @GeneratedValue
     @Column(name = "ORDER_ITEM_ID")
     private Long id;
-//    @Column(name = "ORDER_ID")
-//    private Long orderId;
+    //@Column(name = "ORDER_ID")
+    //private Long orderId;
     @JoinColumn(name = "ORDER_ID")
     @ManyToOne
     private Order order;
-//    @Column(name = "ITEM_ID")
-//    private Long itemId;
+    //@Column(name = "ITEM_ID")
+    //private Long itemId;
     @JoinColumn(name = "ITEM_ID")
     @ManyToOne
     private Item item;
