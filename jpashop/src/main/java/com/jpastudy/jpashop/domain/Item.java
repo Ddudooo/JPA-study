@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 
 /**
@@ -17,7 +19,8 @@ import javax.persistence.ManyToMany;
 @Getter
 @Setter
 @Entity
-public class Item {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Item extends BaseEntity {
 
     @Id
     @GeneratedValue

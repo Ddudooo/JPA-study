@@ -25,7 +25,7 @@ import javax.persistence.Table;
 @Setter
 @Entity
 @Table(name = "ORDERS")
-public class Order {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue

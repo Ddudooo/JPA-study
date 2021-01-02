@@ -1,7 +1,6 @@
 package com.jpastudy.jpashop;
 
-import com.jpastudy.jpashop.domain.Order;
-import com.jpastudy.jpashop.domain.OrderItem;
+import com.jpastudy.jpashop.domain.Book;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
@@ -27,7 +26,10 @@ public class Application {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-
+            Book book = new Book();
+            book.setName("JPA");
+            book.setAuthor("김영한");
+            em.persist(book);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

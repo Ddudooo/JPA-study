@@ -20,7 +20,7 @@ import javax.persistence.OneToMany;
 @Getter
 @Setter
 @Entity
-public class Category {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue
