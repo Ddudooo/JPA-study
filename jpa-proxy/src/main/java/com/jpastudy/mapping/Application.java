@@ -25,33 +25,19 @@ public class Application {
         tx.begin();
         try {
             Member member = new Member("hello");
-            Member member2 = new Member("hello2");
-
             Team team = new Team("team");
-            member.setTeam(team);
-            team.getMembers().add(member);
-            em.persist(member);
-            em.persist(member2);
             em.persist(team);
+            member.setTeam(team);
+            em.persist(member);
 
             em.flush();
             em.clear();
 
             Member findMember = em.getReference(Member.class, member.getId());
-            Member findMember2 = em.find(Member.class, member2.getId());
-            //System.out.println("m1== m2" + (findMember.getClass() == findMember2.getClass()));
-
-            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(findMember));
-
-            System.out.println("findMember = " + findMember.getClass());
-            System.out.println("findMember.id = " + findMember.getId());
-            System.out.println("findMember.name = " + findMember.getName());
-            System.out.println("findMember.team.name = " + findMember.getTeam().getName());
-            System.out.println("===========================================================");
-            System.out.println("findMember = " + findMember.getClass());
-            System.out.println("findMember.id = " + findMember.getId());
-            System.out.println("findMember.name = " + findMember.getName());
-            System.out.println("findMember.team.name = " + findMember.getTeam().getName());
+            System.out.println("m = "+ findMember.getTeam().getClass());
+            System.out.println("==============");
+            findMember.getTeam().getName();
+            System.out.println("==============");
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

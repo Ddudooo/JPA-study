@@ -38,6 +38,7 @@ public class Member extends BaseEntity {
     @Column(name = "TEAM_ID")
     private Long TeamId;
     */
+    //EAGER 사용 하지 말것.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TEAM_ID")
     private Team team;

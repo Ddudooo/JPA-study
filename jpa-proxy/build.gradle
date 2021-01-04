@@ -44,17 +44,3 @@ checkstyle {
     configFile file("${project.rootDir}/config/checkstyle/google_check.xml")
     reportsDir file("${project.rootDir}/config/checkstyle/reports")
 }
-
-allprojects {
-    afterEvaluate {
-        project ->
-            if(project.hasProperty('checkstyle')){
-                println "Adding checkstyle task to $project"
-                task checkstyle {
-                    doLast {
-                        println "Running checkstyle for $project"
-                    }
-                }
-            }
-    }
-}
