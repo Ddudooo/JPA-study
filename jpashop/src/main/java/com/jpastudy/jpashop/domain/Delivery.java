@@ -8,6 +8,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * 주문의 배달 정보 객체.
@@ -25,4 +28,7 @@ public class Delivery extends BaseEntity {
     private String zipcode;
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
+
+    @OneToOne(mappedBy = "delivery", fetch = LAZY)
+    private Order order;
 }

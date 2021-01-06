@@ -14,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import static javax.persistence.FetchType.LAZY;
+
 /**
  * 품목의 분류용 객체.
  */
@@ -27,7 +29,7 @@ public class Category extends BaseEntity {
     private Long id;
 
     private String name;
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "PARENT_ID")
     private Category parent;
 
