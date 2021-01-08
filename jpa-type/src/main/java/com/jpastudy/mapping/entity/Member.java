@@ -5,11 +5,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * 테스트용 간단한 엔티티 모델.
@@ -30,11 +41,34 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String name;
 
-    @Embedded
-    private Address address;
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
 
     @Embedded
-    private Period period;
+    private Address homeAddress;
+
+    @ElementCollection
+    @CollectionTable(name = "FAVORITE_FOOD", joinColumns =
+    @JoinColumn(name = "MEMBER_ID")
+    )
+    @Column(name = "FOOD_NAME")
+    private Set<String> favoriteFoods = new HashSet<>();
+
+    /*
+    @ElementCollection
+    @CollectionTable(name = "ADDRESS", joinColumns =
+        @JoinColumn(name = "MEMBER_ID")
+    )
+    private List<Address> addressHistory = new ArrayList<>();
+    */
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "MEMBER_ID")
+    private List<AddressEntity> addressHistory = new ArrayList<>();
 
     public Member(String name) {
         this.name = name;

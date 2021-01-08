@@ -16,6 +16,7 @@
         <class>com.jpastudy.mapping.entity.Child</class>
 
         <class>com.jpastudy.mapping.entity.Address</class>
+        <class>com.jpastudy.mapping.entity.AddressEntity</class>
         <class>com.jpastudy.mapping.entity.Period</class>
         <properties>
             <!--  필수 속성  -->
