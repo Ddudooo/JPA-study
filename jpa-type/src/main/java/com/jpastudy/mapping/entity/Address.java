@@ -6,11 +6,13 @@ import lombok.Setter;
 
 import javax.persistence.Embeddable;
 
+import static lombok.AccessLevel.PRIVATE;
+
 /**
  * 주소 관련 임베디드 타입.
  */
 @Getter
-@Setter
+@Setter(value = PRIVATE)
 @Embeddable
 @NoArgsConstructor
 public class Address {

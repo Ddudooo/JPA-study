@@ -29,6 +29,10 @@ public class Application {
             member.setAddress(new Address("city", "street", "zip"));
             member.setPeriod(new Period());
             em.persist(member);
+
+            Address oldAddress = member.getAddress();
+            Address newAddress = new Address("newCity", oldAddress.getStreet(), oldAddress.getZipcode());
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
