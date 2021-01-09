@@ -121,3 +121,134 @@ SELECT 절에 조회할 대상을 지정하는 것
     `SELECT new jpabook.jpql.UserDTO(m.username, m.age) FROM Member m`
   - 패키지 명을 포함한 전체 클래스 명 입력
   - 순서와 타입이 일치하는 생성자 필요
+
+## 페이징 API
+
+JPA는 페이징을 다음 두 API로 추상화
+
+- `setFirstResult(int startPosition)`
+  조회 시작 위치 (0 부터 시작)
+- `setMaxResults(int maxResult)`
+  조회할 데이터 수
+
+```java
+//페이징 쿼리
+String jpql = "select m from Member m order by m.name desc";
+List<Member> resultList = em.createQuery(jpql, Member.class)
+.setFirstResult(10)
+.setMaxResults(20)
+.getResultList();
+```
+
+## 조인
+
+- 내부 조인
+  `SELECT m FROM Member m [INNER] JOIN m.team t`
+- 외부 조인
+  `SELECT m FROM Member m LEFT [OUTER] JOIN m.team t`
+- 세타 조인
+  `select count(m) from Member m, Team t where m.username = [t.name](http://t.name/)`
+
+### ON 절
+
+ON절을 활용한 조인(JPA 2.1부터 지원)
+
+1. 조인 대상 필터링
+2. 연관관계 없는 엔티티 외부 조인(하이버네이트 5.1부터)
+
+### 서브 쿼리
+
+- 나이가 평균보다 많은 회원
+  `select m from Member m
+  where m.age > (select avg(m2.age) from Member m2)`
+- 한 건이라도 주문한 고객
+  `select m from Member m
+  where (select count(o) from Order o where m = o.member) > 0`
+
+### 서브 쿼리 지원 함수
+
+- [NOT] EXISTS (subquery): 서브쿼리에 결과가 존재하면 참
+  - {ALL | ANY | SOME} (subquery)
+  - ALL 모두 만족하면 참
+  - ANY, SOME: 같은 의미, 조건을 하나라도 만족하면 참
+- [NOT] IN (subquery): 서브쿼리의 결과 중 하나라도 같은 것이 있으면 참
+
+### JPA 서브 쿼리 한계
+
+- JPA는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능
+- SELECT 절도 가능(하이버네이트에서 지원)
+- **FROM 절의 서브 쿼리는 현재 JPQL에서 불가능**
+  - **조인으로 풀 수 있으면 풀어서 해결**
+
+### JPQL 타입 표현
+
+- 문자
+  `HELLO`, `She’s`
+- 숫자
+  `10L(Long)`, `10D(Double)`, `10F(Float)`
+- Boolean
+  `TRUE`, `FALSE`
+- ENUM
+  `jpabook.MemberType.Admin` (패키지명 포함)
+- 엔티티 타입
+  `TYPE(m) = Member` (상속 관계에서 사용)
+
+### JPQL 기타
+
+- SQL과 문법이 같은 식
+- `EXISTS`, `IN`
+- `AND`, `OR`, `NOT`
+- `=`, `>`, `>=`, `<`, `<=`, `<>`
+- `BETWEEN`, `LIKE`, `IS NULL`
+
+### CASE 식
+
+기본 CASE 식
+
+```sql
+select
+case when m.age <= 10 then '학생요금'
+when m.age >= 60 then '경로요금'
+else '일반요금'
+end
+from Member m
+```
+
+단순 CASE 식
+
+```sql
+select
+case t.name
+when '팀A' then '인센티브110%'
+when '팀B' then '인센티브120%'
+else '인센티브105%'
+end
+from Team t
+```
+
+### 조건식 - CASE 식
+
+- `COALESCE`
+  하나씩 조회해서 null이 아니면 반환
+- `NULLIF`
+  두 값이 같으면 null 반환, 다르면 첫번째 값 반환
+
+### JPQL 기본 함수
+
+- `CONCAT`
+- `SUBSTRING`
+- `TRIM`
+- `LOWER`, `UPPER`
+- `LENGTH`
+- `LOCATE`
+- `ABS`, `SQRT`, `MOD`
+- `SIZE`, `INDEX`(JPA 용도)
+
+### 사용자 정의 함수 호출
+
+- 하이버네이트는 사용전 방언에 추가해야 한다.
+- 사용하는 DB 방언을 상속받고, 사용자 정의 함수를 등록한다.
+
+```sql
+select function('group_concat', [i.name](http://i.name/)) from Item i
+```

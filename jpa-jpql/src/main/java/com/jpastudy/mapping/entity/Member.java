@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -37,6 +39,9 @@ public class Member {
 
     private int age;
 
+    @Enumerated(value = EnumType.STRING)
+    private MemberType type;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
 
@@ -46,5 +51,19 @@ public class Member {
 
     public Member(String name) {
         this.name = name;
+    }
+
+    public void changeTeam(Team team) {
+        this.setTeam(team);
+        team.getMembers().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", age=" + age +
+            '}';
     }
 }
