@@ -55,45 +55,15 @@ public class Application {
             em.flush();
             em.clear();
 
-            //fetch 조인
-            String query = "select m from Member m join fetch m.team";
-            //조인
-            //String query = "select m from Member m left join m.team t";
-            //세터 조인
-            //String query = "select m from Member m, Team t where m.name = t.name";
-            //String query = "select m from Member m left join m.team t on t.name = 'teamA'";
-            //String query = "select m from Member m left join Team t on m.name = t.name";
-            /*String query = "select "
-                + "case when m.age <= 10 then '학생요금' "
-                + "case when m.age >= 60 then '경로요금' "
-                + "else '일반요금' end"
-                + "from Member m";*/
-            List<Member> memberList = em
-                .createQuery(query, Member.class)
-                .getResultList();
-            for (Member findMember : memberList) {
-                System.out.println("member = " + findMember);
-                Team memberTeam = findMember.getTeam();
-                System.out.println("team = " + memberTeam.getName());
-            }
+            int resultCount = em.createQuery("update Member m set m.age=20")
+                .executeUpdate();
 
             em.clear();
-            //일대다 fetch 조인의 경우 값이 n개
-            //team A 중복
-            //query = "select t from Team t join fetch t.members";
 
-            query = "select distinct t from Team t join fetch t.members";
+            System.out.println("resultCount = " + resultCount);
 
-            List<Team> teamList = em
-                .createQuery(query, Team.class)
-                .getResultList();
-            for (Team findTeam : teamList) {
-                System.out.println("team = " + findTeam);
-                List<Member> findTeamMembers = findTeam.getMembers();
-                for(Member findMember : findTeamMembers) {
-                    System.out.println("member = " + findMember);
-                }
-            }
+            Member findMember = em.find(Member.class, member.getId());
+            System.out.println("findMember.age = " + findMember.getAge());
 
             tx.commit();
         } catch (Exception e) {

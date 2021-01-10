@@ -357,3 +357,80 @@ FROM TEAM T
 INNER JOIN MEMBER M ON T.ID=M.TEAM_ID 
 WHERE T.NAME = '팀A'
 ```
+
+### 페치 조인의 특징과 한계
+
+- 페치 조인 대상에는 별칭을 줄 수 없다.
+  - 하이버네이트는 가능, 가급적 사용X
+- **둘 이상의 컬렉션은 페치 조인 할 수 없다.**
+- **컬렉션을 페치 조인하면 페이징 API(`setFirstResult`, `setMaxResults`)를 사용할 수 없다.**
+  - 일대일, 다대일 같은 단일 값 연관 필드들은 페치 조인해도 페이징 가능
+  - 하이버네이트는 경고 로그를 남기고 메모리에서 페이징(매우 위험)
+- 연관된 엔티티들을 SQL 한 번으로 조회 - 성능 최적화
+- 엔티티에 직접 적용하는 글로벌 로딩 전략보다 우선함
+  - `@OneToMany(fetch = FetchType.LAZY)` //글로벌 로딩 전략
+- 실무에서 글로벌 로딩 전략은 모두 지연 로딩
+- 최적화가 필요한 곳은 페치 조인 적용
+
+### 정리
+
+- 모든 것을 페치 조인으로 해결할 수 는 없음
+- 페치 조인은 객체 그래프를 유지할 때 사용하면 효과적
+- 여러 테이블을 조인해서 엔티티가 가진 모양이 아닌 전혀 다른 결과를 내야 하면,
+  페치 조인 보다는 일반 조인을 사용하고
+  **필요한 데이터들만 조회해서 DTO로 반환하는 것이 효과적**
+
+### JPQL 다형성 쿼리
+
+- 조회 대상을 특정 자식으로 한정
+  예) Item 중에 Book, Movie를 조회해라
+
+```sql
+[JPQL]
+select i from Item i
+where type(i) IN (Book, Movie)
+
+[SQL]
+select i from i
+where i.DTYPE in (‘B’, ‘M’)
+```
+
+### TREAT(JPA 2.1)
+
+- 자바의 타입 캐스팅과 유사
+- 상속 구조에서 부모 타입을 특정 자식 타입으로 다룰 때 사용
+- `FROM`, `WHERE`, `SELECT`(하이버네이트 지원) 사용
+
+### JPQL  엔티티 직접 사용
+
+JPQL에서 엔티티를 직접 사용하면 SQL에서 해당 엔티티의 기본 키 값을 사용
+
+```sql
+[JPQL]
+select count(m.id) from Member m //엔티티의 아이디를 사용
+select count(m) from Member m //엔티티를 직접 사용
+
+[SQL](JPQL 둘다 같은 다음 SQL 실행)
+select count(m.id) as cnt from Member m
+```
+
+### JPQL Named  쿼리
+
+- 미리 정의해서 이름을 부여해두고 사용하는 JPQL
+- 정적 쿼리
+- 어노테이션, XML에 정의
+- 애플리케이션 로딩 시점에 초기화 후 재사용
+- **애플리케이션 로딩 시점에 쿼리를 검증**
+
+### JPQL 벌크 연산
+
+- 쿼리 한 번으로 여러 테이블 로우 변경(엔티티)
+- `executeUpdate()`의 결과는 영향받은 엔티티 수 반환
+- `UPDATE`, `DELETE` 지원
+- `INSERT`(insert into .. select, 하이버네이트 지원)
+
+### 주의
+
+- 벌크 연산은 영속성 컨텍스트를 무시하고 데이터베이스에 직접 쿼리
+  - 벌크 연산을 먼저 실행
+  - **벌크 연산 수행 후 영속성 컨텍스트 초기화**
