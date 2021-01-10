@@ -252,3 +252,108 @@ from Team t
 ```sql
 select function('group_concat', [i.name](http://i.name/)) from Item i
 ```
+
+## JPQL 경로 표현식
+
+> .(점) 을 찍어 객체 그래프를 탐색하는 것
+
+- **상태 필드**(state field)
+  단순히 값을 저장하기 위한 필드 (ex: m.username)
+- **연관 필드**(association field)
+  연관관계를 위한 필드
+  - **단일 값 연관 필드**
+    `@ManyToOne`, `@OneToOne`, 대상이 엔티티(ex: m.team)
+  - **컬렉션 값 연관 필드**
+    `@OneToMany`, `@ManyToMany`, 대상이 컬렉션(ex: m.orders)
+
+### 경로 표현식 특징
+
+- **상태 필드**(state field)
+  경로 탐색의 끝, 탐색X
+- **단일 값 연관 경로**
+  묵시적 내부 조인(inner join) 발생, 탐색O
+- **컬렉션 값 연관 경로**
+  묵시적 내부 조인 발생, 탐색X
+  - FROM 절에서 명시적 조인을 통해 별칭을 얻으면 별칭을 통해 탐색 가능
+
+### 명시적 조인, 묵시적 조인
+
+- 명시적 조인
+  join 키워드 직접 사용
+  - `select m from Member m join m.team t`
+- 묵시적 조인
+  경로 표현식에 의해 묵시적으로 SQL 조인 발생 (내부 조인만 가능)
+  - `select m.team from Member m`
+
+### 주의 사항
+
+- 항상 내부 조인
+- 컬렉션은 경로 탐색의 끝, 명시적 조인을 통해 별칭을 얻어야함
+- 경로 탐색은 주로 SELECT, WHERE 절에서 사용하지만
+  묵시적 조인으로 인해 SQL의 FROM (JOIN) 절에 영향을 줌
+- **가급적 묵시적 조인 대신에 명시적 조인 사용**
+- 조인은 SQL 튜닝에 중요 포인트
+- 묵시적 조인은 조인이 일어나는 상황을 한눈에 파악하기 어려움
+
+## JPQL - 페치 조인
+
+> ❗실무에서 정말 중요함!
+
+### 페치 조인 (fetchjoin)
+
+- SQL 조인 종류X
+- JPQL에서 **성능 최적화**를 위해 제공하는 기능
+- 연관된 엔티티나 컬렉션을 **SQL 한 번에 함께 조회**하는 기능
+- join fetch 명령어 사용
+- 페치 조인 ::= [ LEFT [OUTER] | INNER ] JOIN FETCH 조인경로
+
+### 엔티티 페치 조인
+
+- 회원을 조회하면서 연관된 팀도 함께 조회(SQL 한 번에)
+- SQL을 보면 회원 뿐만 아니라 **팀(T.*)**도 함께 **SELECT***
+- ***[JPQL]**
+  `select m from Member m join fetch m.team`*
+- ***[SQL]**
+  `SELECT M.*, T.* FROM MEMBER M
+  INNER JOIN TEAM T ON M.TEAM_ID=[T.ID](http://t.id/)`
+
+### 컬렉션 페치 조인
+
+- 일대다 관계, 컬렉션 페치 조인
+- **[JPQL]**
+  `select t
+  from Team t join fetch t.members
+  where [t.name](http://t.name/) = '팀A'`
+- **[SQL]**
+  `SELECT T.*, M.*
+  FROM TEAM T
+  INNER JOIN MEMBER M ON T.ID=M.TEAM_ID
+  WHERE [T.NAME](http://t.name/) = '팀A'`
+
+### 페치 조인과 DISTINCT
+
+- SQL의 DISTINCT는 중복된 결과를 제거하는 명령
+- JPQL의 DISTINCT 2가지 기능 제공
+  1. SQL에 DISTINCT를 추가
+  2. 애플리케이션에서 엔티티 중복 제거
+
+### 페치 조인과 일반 조인 차이
+
+- JPQL은 결과를 반환할 때 연관관계 고려X
+- 단지 SELECT 절에 지정한 엔티티만 조회할 뿐
+- 여기서는 팀 엔티티만 조회하고, 회원 엔티티는 조회X
+- 페치 조인을 사용할 때만 연관된 엔티티도 함께 **조회(즉시 로딩)**
+- **페치 조인은 객체 그래프를 SQL 한번에 조회하는 개념**
+
+```sql
+[JPQL]
+select t 
+from Team t join fetch t.members
+where t.name = '팀A'
+
+[SQL]
+SELECT T.*, M.*
+FROM TEAM T
+INNER JOIN MEMBER M ON T.ID=M.TEAM_ID 
+WHERE T.NAME = '팀A'
+```
